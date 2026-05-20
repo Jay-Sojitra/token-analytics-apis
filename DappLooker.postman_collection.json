@@ -1,0 +1,95 @@
+{
+  "info": {
+    "name": "DappLooker — Token Analytics API",
+    "description": "Token Insight & HyperLiquid PnL endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/health"
+      }
+    },
+    {
+      "name": "Token Insight — Bitcoin (default)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/token/bitcoin/insight",
+        "body": { "mode": "raw", "raw": "{}" }
+      }
+    },
+    {
+      "name": "Token Insight — Chainlink (custom params)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/token/chainlink/insight",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"vs_currency\": \"usd\",\n  \"history_days\": 30\n}"
+        }
+      }
+    },
+    {
+      "name": "Token Insight — Ethereum",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/token/ethereum/insight",
+        "body": { "mode": "raw", "raw": "{}" }
+      }
+    },
+    {
+      "name": "Token Insight — Invalid Token (404)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/token/nonexistent-token-xyz/insight",
+        "body": { "mode": "raw", "raw": "{}" }
+      }
+    },
+    {
+      "name": "HyperLiquid PnL — Sample Wallet",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/hyperliquid/0x563C175E6f11582f65D6d9E360A618699DEe14a9/pnl?start=2025-01-01&end=2025-01-07",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "hyperliquid", "0x563C175E6f11582f65D6d9E360A618699DEe14a9", "pnl"],
+          "query": [
+            { "key": "start", "value": "2025-01-01" },
+            { "key": "end", "value": "2025-01-07" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "HyperLiquid PnL — Invalid Wallet (400)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/hyperliquid/invalid-wallet/pnl?start=2025-01-01&end=2025-01-07",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "hyperliquid", "invalid-wallet", "pnl"],
+          "query": [
+            { "key": "start", "value": "2025-01-01" },
+            { "key": "end", "value": "2025-01-07" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "HyperLiquid PnL — Missing Dates (400)",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/hyperliquid/0x563C175E6f11582f65D6d9E360A618699DEe14a9/pnl"
+      }
+    }
+  ]
+}

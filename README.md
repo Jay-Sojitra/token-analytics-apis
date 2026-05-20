@@ -87,7 +87,7 @@ curl -X POST http://localhost:3000/api/token/bitcoin/insight \
   -d '{"vs_currency": "usd", "history_days": 30}'
 ```
 
-**Response:**
+**Real response example** (captured live, BTC at ~$77,400):
 ```json
 {
   "source": "coingecko",
@@ -96,15 +96,15 @@ curl -X POST http://localhost:3000/api/token/bitcoin/insight \
     "symbol": "btc",
     "name": "Bitcoin",
     "market_data": {
-      "current_price_usd": 65000,
-      "market_cap_usd": 1200000000000,
-      "total_volume_usd": 30000000000,
-      "price_change_percentage_24h": 2.5
+      "current_price_usd": 77416,
+      "market_cap_usd": 1550493393047,
+      "total_volume_usd": 26912759444,
+      "price_change_percentage_24h": 0.78248
     }
   },
   "insight": {
-    "reasoning": "Bitcoin is showing strong upward momentum...",
-    "sentiment": "Bullish"
+    "reasoning": "Bitcoin is currently trading at $77,416, experiencing a modest 24-hour recovery of 0.78% after a consistent slide from the $81,000 level over the past week. Despite this slight daily bounce, the broader short-term trend remains downward, indicating persistent selling pressure and bearish momentum. Market participants are likely exercising caution as BTC struggles to reclaim its previous short-term highs.",
+    "sentiment": "Bearish"
   },
   "model": { "provider": "z.ai", "model": "glm-5.1" }
 }
@@ -129,40 +129,55 @@ GET /api/hyperliquid/:wallet/pnl?start=YYYY-MM-DD&end=YYYY-MM-DD
 
 **Example:**
 ```bash
-curl "http://localhost:3000/api/hyperliquid/0xabcdef1234567890abcdef1234567890abcdef12/pnl?start=2025-01-01&end=2025-01-07"
+curl "http://localhost:3000/api/hyperliquid/0x0067ca83478aa47efCa2aa3551A7265d9C58B145/pnl?start=2025-11-20&end=2025-11-21"
 ```
 
-**Response:**
+**Real response example** (captured live — wallet holds an open BTC long entered on 2025-11-20 with 0.00447 BTC @ $86,658, fee 0.17 USDC; the position was still open at the time of capture):
 ```json
 {
-  "wallet": "0xabcdef...",
-  "start": "2025-01-01",
-  "end": "2025-01-07",
+  "wallet": "0x0067ca83478aa47efCa2aa3551A7265d9C58B145",
+  "start": "2025-11-20",
+  "end": "2025-11-21",
   "daily": [
     {
-      "date": "2025-01-01",
-      "realized_pnl_usd": 120.5,
-      "unrealized_pnl_usd": 10.0,
-      "fees_usd": 2.1,
-      "funding_usd": -0.5,
-      "net_pnl_usd": 127.9,
-      "equity_usd": 10127.9
+      "date": "2025-11-20",
+      "realized_pnl_usd": 0,
+      "unrealized_pnl_usd": -42.5241,
+      "fees_usd": 0.1673,
+      "funding_usd": -0.0146,
+      "net_pnl_usd": -42.7061,
+      "equity_usd": 113.7502
+    },
+    {
+      "date": "2025-11-21",
+      "realized_pnl_usd": 0,
+      "unrealized_pnl_usd": -42.5241,
+      "fees_usd": 0,
+      "funding_usd": -0.1136,
+      "net_pnl_usd": -42.6377,
+      "equity_usd": 113.7502
     }
   ],
   "summary": {
-    "total_realized_usd": 120.5,
-    "total_unrealized_usd": 10.0,
-    "total_fees_usd": 2.1,
-    "total_funding_usd": -0.5,
-    "net_pnl_usd": 127.9
+    "total_realized_usd": 0,
+    "total_unrealized_usd": -42.5241,
+    "total_fees_usd": 0.1673,
+    "total_funding_usd": -0.1282,
+    "net_pnl_usd": -42.8196
   },
   "diagnostics": {
     "data_source": "hyperliquid_api",
-    "last_api_call": "2025-01-07T12:00:00.000Z",
-    "notes": "Unrealized PnL reflects current open positions snapshot."
+    "last_api_call": "2026-05-20T11:27:41.259Z",
+    "notes": "Unrealized PnL reflects current open positions snapshot. Realized PnL from closed trades in range."
   }
 }
 ```
+
+**Cross-checking with HyperLiquid frontend:**
+- Entry fill 0.17 USDC fee → `fees_usd: 0.1673` ✓
+- Daily funding accrues from position open onwards (small negative amounts) ✓
+- Position is open (never closed) → `realized_pnl_usd: 0` for every day ✓
+- Current account value ~$113.75 → `equity_usd: 113.7502` ✓
 
 **Error codes:**
 - `400` — Invalid wallet address or date format
